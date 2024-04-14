@@ -51,7 +51,7 @@ const CONFIGS: Record<number, EvmNetworkConfig> = {
   1: evmMainnet,
   5: evmGoerli,
   11155111: evmSepolia,
-  59140: evmLineaGoerli
+  59140: evmLineaGoerli,
 };
 
 export function createActions(

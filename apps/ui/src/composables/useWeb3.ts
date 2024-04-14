@@ -1,16 +1,19 @@
 import { Web3Provider } from '@ethersproject/providers';
+import { ethers } from "ethers";
 import { getInstance } from '@snapshot-labs/lock/plugins/vue3';
 import { formatUnits } from '@ethersproject/units';
 import { getNames } from '@/helpers/stamp';
 import { formatAddress } from '@/helpers/utils';
 import networks from '@/helpers/networks.json';
+import '@rainbow-me/rainbowkit/styles.css';
+import Web3Modal from "web3modal";
 
 networks['starknet'] = {
   key: 'starknet',
   name: 'Starknet',
   explorer: 'https://testnet.starkscan.co'
 };
-
+console.log(networks)
 let auth;
 const defaultNetwork: any = import.meta.env.VITE_DEFAULT_NETWORK || Object.keys(networks)[0];
 
@@ -24,17 +27,22 @@ const state = reactive({
 });
 
 export function useWeb3() {
-  const { mixpanel } = useMixpanel();
+  
 
   async function login(connector = 'injected') {
     auth = getInstance();
-    state.authLoading = true;
+    state.authLoading = false;
     await auth.login(connector);
     if (auth.provider.value) {
-      mixpanel.track('Connect', { connector });
-
+    //  mixpanel.track('Connect', { connector });
+      const web3Modal = new Web3Modal();
+      const connection = await web3Modal.connect();
+      // auth.web3  = new ethers.providers.Web3Provider(connection);
       auth.web3 = new Web3Provider(auth.provider.value, 'any');
+      console.log(auth.web3)
+
       await loadProvider();
+      state.authLoading = false
     }
 
     // NOTE: Handle case where metamask stays locked after user ignored
@@ -62,6 +70,7 @@ export function useWeb3() {
         });
         auth.provider.value.on('accountsChanged', async accounts => {
           if (accounts.length !== 0) {
+            console.log(accounts)
             state.account = formatAddress(accounts[0]);
             await login();
           }

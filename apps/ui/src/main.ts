@@ -7,6 +7,7 @@ import router from '@/router';
 import '@/helpers/auth';
 import '@/style.scss';
 
+
 const knownHosts = ['app.safe.global', 'pilot.gnosisguild.org'];
 const parentUrl =
   window.location != window.parent.location
